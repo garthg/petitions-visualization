@@ -1,4 +1,4 @@
-"""tsvfile.py -- Helper methods for tabular data in tab-delimited files.
+"""geocoder.py -- Batch geocoding using Google Geocoding API.
 
 Copyright 2015 Garth Griffin
 Distributed under the GNU GPL v3. For full terms see the file LICENSE.
@@ -20,7 +20,7 @@ PetitionsVisualization.  If not, see <http://www.gnu.org/licenses/>.
 ________________________________________________________________________________
 
 Author: Garth Griffin (http://garthgriffin.com)
-Date: July 6, 2015. 
+Date: July 6, 2015 
 
 This script uses the Google Geocoding API to geocode locations.
 
