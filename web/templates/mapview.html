@@ -1,0 +1,839 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <title>Antislavery Petitions Map View</title>
+    <link rel="stylesheet" href="//maxcdn.bootstrapcdn.com/bootstrap/3.3.5/css/bootstrap.min.css">
+    <style type="text/css">
+      html {
+        height:100%;
+        background-color:#fff;
+      }
+      body {
+        height: 100%;
+        min-height:400px;
+        padding: 0;
+        margin: 0;
+        font-family: sans-serif;
+      }
+      #container {
+        height: 100%;
+        margin: 0 auto;
+        top:0;
+        bottom:0;
+        left:0;
+        right:0;
+        padding:0 1em;
+      }
+      #container a {
+        text-decoration: none;
+        color: #33f;
+      }
+      #header {
+        height:4%;
+        padding: .3em 0 0 0;
+        margin: 0;
+        width:100%;
+        text-align:center;
+        overflow-x: visible;
+        overflow-y: visible;
+      }
+      #header h1 {
+        font-size:1.1em;
+        display:inline;
+      }
+      #header a {
+        font-size:.9em;
+      }
+      #dataverselink {
+        float:right;
+        text-align:right;
+        width:9em;
+      }
+      #breadcrumblink {
+        float:left;
+        width:9em;
+        text-align:left;
+      }
+      #map-container {
+        padding: 0;
+        margin:0;
+        width:100%;
+        height:45%;
+      }
+      #map-canvas { 
+        position:relative;
+        height: 100%; 
+        width: 100%;
+        padding: 0;
+        margin:0;
+      }
+      #map-unknown-location {
+        position:absolute;
+        cursor:pointer;
+        top:40%;
+        right:2em;
+        z-index:1;
+        width:6em;
+        font-size:.7em;
+        text-align:center;
+        background-color:#bbb;
+        color:#eee;
+        padding:.2em;
+        display:none;
+      }
+      #slider-container {
+        height:8%;
+        padding:0;
+        margin:0;
+        display:table;
+        border-spacing:0;
+        width:100%;
+      }
+      #slider-container-inner {
+        width:100%;
+        height:100%;
+        margin:0;
+        padding:0;
+        display:table-cell;
+        vertical-align:middle;
+      }
+      #slider-container-inner-upper {
+        width:100%;
+        display:block;
+      }
+      #slider-container #slider-label {
+        display:inline-block;
+        width:33%;
+      }
+      #slider-container #slider-input {
+        border:0;
+        margin:0;
+        width:7em;
+        font-weight:bold;
+        font-size:.9em;
+        overflow:visible;
+      }
+      #slider-container #count-label {
+        font-size:.9em;
+        display:inline-block;
+        width:33%;
+        text-align:center;
+        color:#444;
+      }
+      #slider-container #slider-playback-container {
+        text-align:right;
+        display:inline-block;
+        width:33%;
+      }
+      #slider-container #slider-playback-button {
+        border: 1px solid #fff;
+        font-weight:bold;
+        background-color:#ddd;
+        color:#33f;
+        vertical-align:center;
+        width:2em;
+        height:100%;
+        display:inline-block;
+        font-size:1.1em;
+        margin:0;
+        padding:0;
+      }
+      #slider-container #slider-playback-button:hover {
+        border: 1px solid #999;
+        background-color:#ddc;
+      }
+      #slider-container #slider-range {
+        margin:.3em 0 .2em 0;
+      }
+      #list-container {
+        padding: .2em;
+        margin: 0;
+        border: 1px solid gray;
+        height:33%;
+      }
+      #list-container #list-header {
+        margin: 0;
+        font-weight:bold;
+      }
+      #list-container #list-body {
+        overflow-y:scroll;
+        overflow-x:hidden;
+        height:85%;
+        padding: 0;
+        margin:0;
+      }
+      #list-container .list-row {
+        font-size:.8em;
+        margin: 0;
+        padding: 0;
+        width:100%;
+        display:inline-block;
+        white-space: nowrap;
+        overflow:hidden;
+        cursor:pointer;
+      }
+      #list-container .row-highlight {
+        background-color:#ffc;
+      }
+      #list-container .list-row .list-row-col1 {
+        width: 4em;
+        float:left;
+        overflow-x:hidden;
+        margin-right:.2em;
+      }
+      #list-container .list-row .list-row-col2 {
+        width: 6em;
+        float:left;
+        overflow-x:hidden;
+        margin-right:.2em;
+      }
+      #list-container .list-row .list-row-col3 {
+        width: 11em;
+        float:left;
+        overflow-x:hidden;
+        margin-right:.2em;
+      }
+      #list-container .list-row .list-row-col4 {
+        width:auto;
+        overflow:hidden;
+        margin-right:.2em;
+      }
+      #footer {
+        color: #999;
+        font-size:0.6em;
+        height:7%;
+        margin:0;
+        padding: .1em 0 0 0;
+        overflow-y: hidden;
+      }
+      #footer a {
+        color: #88f;
+      }
+      #overlay-row-template {
+        display:none;
+      }
+      #overlay-content-template {
+        display:none;
+      }
+      .ui-dialog > .ui-widget-header {
+        background:#fff;
+        border:none;
+      }
+      .overlay-content-container {
+        font-size:.8em;
+      }
+      .overlay-rows-container {
+        overflow-y:auto;
+        overflow-x:show;
+        border:1px solid #aaa;
+        padding:.2em 1em;
+      }
+      .overlay-row-entry {
+        margin:0 0 1em 0;
+      }
+      .overlay-row-title {
+        font-weight:bold;
+      }
+      .overlay-row-entry a {
+        text-decoration: none;
+        color: #33f;
+      }
+      .overlay-footer {
+        height:1em;
+        padding:.2em 0;
+        overflow:hidden;
+      }
+    </style>
+    <link rel="stylesheet" href="//code.jquery.com/ui/1.11.3/themes/smoothness/jquery-ui.css">
+    <script src="//code.jquery.com/jquery-1.10.2.js"></script>
+    <script src="//code.jquery.com/ui/1.11.3/jquery-ui.js"></script>
+    <!-- Begin global variables -->
+    <script>
+      var MAPDATA = null;
+      var MAPOBJECT = null;
+      var CIRCLEOBJECTS = {};
+      var TABLEROWOBJECTS = [];
+      var PREVINDICES = null;
+      var SLIDERRANGE = [1700,1900];
+      var SLIDERINIT = [1775,1825];
+      var SLIDERPLAYTIMER = null;
+      var MAPUPDATELOOP = null;
+      var ROWSFORPLACE = {};
+      var DATAVERSEURLPREFIX = 'https://dataverse.harvard.edu/dataset.xhtml?persistentId=';
+      function circleradiusforcount(count) { return Math.sqrt(count)*1000; }
+    </script>
+    <!-- End global variables -->
+    <!-- For map -->
+    <script src="https://maps.googleapis.com/maps/api/js"></script>
+    <script>
+      function setCircleHighlightForPlace(place, highlight) {
+        var circle = CIRCLEOBJECTS[place];
+        if (place == '<UNKNOWN>' || $(circle).attr('id') == 'map-unknown-location') {
+          var elem = $('#map-unknown-location');
+          if (highlight) {
+            elem.css('background-color','#ffa');
+            elem.css('color','#bbb');
+          } else {
+            elem.css('background-color','');
+            elem.css('color','');
+          }
+        } else {
+          if (circle == null) return;
+          if (highlight) {
+            circle.setOptions({'strokeColor':'#ff8','fillColor':'#ffa'});
+          } else {
+          circle.setOptions({
+            'strokeColor':$(circle).attr('data-baseStrokeColor'),
+            'fillColor':$(circle).attr('data-baseFillColor')
+          });
+          }
+        }
+      }
+      function makecircle(lat, lng, size, darkened) {
+        //console.log('Circle at '+lat+','+lng+' with size '+size)
+        var circleOptions = {
+          strokeColor: '#8888ff',
+          strokeOpacity: 0.9,
+          strokeWeight: 2,
+          clickable:true,
+          fillColor: '#aaaaff',
+          fillOpacity: 0.4,
+          map: MAPOBJECT,
+          center: new google.maps.LatLng(lat, lng),
+          radius: circleradiusforcount(size)
+        };
+        if (darkened) {
+          circleOptions.strokeColor = '#9933ff';
+          circleOptions.fillColor = '#cc99ff';
+        }
+        var circle = new google.maps.Circle(circleOptions);
+        $(circle).attr('data-baseStrokeColor',circleOptions.strokeColor);
+        $(circle).attr('data-baseFillColor',circleOptions.fillColor);
+        return circle;
+      }
+      $(function() {
+        // Center on Massachusetts: 42.378877,-72.032366 zoom 8
+        // Center on Boston: 42.3600825,-71.0588801 zoom 9
+        var mapOptions = {
+          center: { lat: 42.3600825, lng: -71.0588801 },
+          zoom: 9
+        };
+        MAPOBJECT = new google.maps.Map(document.getElementById('map-canvas'), mapOptions);
+        console.log("Map object created.");
+      });
+    </script>
+    <!-- End for map -->
+    <!-- Begin data structures -->
+    <script>
+      $(function() {
+        var READYTIMER = null;
+        var READY_ATTEMPT_COUNT = 0;
+        var READY_ATTEMPT_MAX = 50;
+        function createtablerows(rows) {
+          var output = [];
+          for (var i=0; i<rows.length; i++) {
+            var row = rows[i];
+            var datestring = "";
+            if (row['time start'].length > 0) {
+              datestring += row['time start'].slice(0,4);
+            }
+            if (row['time end'].length > 0) {
+              var yearEnd = row['time end'].slice(0,4);
+              if (datestring.length == 0 || datestring != yearEnd) {
+                if (datestring.length != 0) datestring += '-';
+                datestring += yearEnd;
+              }
+            }
+            var curr = [parseInt(row['signatures']), datestring, row['location'], row['topic']];
+            output.push(curr);
+          }
+          return output;
+        }
+        function circleaddhandlers(circle, key) {
+          google.maps.event.addListener(circle, 'click', function() { 
+            showoverlayforplace(key);
+          });
+          google.maps.event.addListener(circle, 'mouseover', function() { 
+            setCircleHighlightForPlace(key, true);
+            setRowHighlightForPlace(key, true);
+          });
+          google.maps.event.addListener(circle, 'mouseout', function() { 
+            setCircleHighlightForPlace(key, false);
+            setRowHighlightForPlace(key, false);
+          });
+        }
+        function createallcircles() {
+          for (var key in MAPDATA.rowsForPlace) {
+            if (key == '<UNKNOWN>') { continue; }
+            var circle = null;
+            if (key in MAPDATA.latlngForPlace) {
+              var latlng = MAPDATA.latlngForPlace[key];
+              var count = MAPDATA.rowsForPlace[key].length;
+              var darkened = false;
+              if (key == 'Massachusetts') {
+                console.log('Darkened circle for: '+key)
+                darkened = true;
+              }
+              circle = makecircle(latlng[0], latlng[1], count, darkened);
+            } else {
+              console.log('No latlng for place: "'+key+'"');
+              Array.prototype.push.apply(MAPDATA.rowsForPlace['<UNKNOWN>'], MAPDATA.rowsForPlace[key]);
+              circle = $('#map-unknown-location');
+            }
+            CIRCLEOBJECTS[key] = circle;
+            circleaddhandlers(circle, key);
+          }
+          if (MAPDATA.rowsForPlace['<UNKNOWN>'].length > 0) {
+            var elem = $('#map-unknown-location');
+            elem.show()
+            elem.on('click', function() {
+              showoverlayforplace('<UNKNOWN>');
+            });
+            elem.on('mouseover', function() {
+              setCircleHighlightForPlace('<UNKNOWN>', true);
+              setRowHighlightForPlace('<UNKNOWN>', true);
+            });
+            elem.on('mouseout', function() {
+              setCircleHighlightForPlace('<UNKNOWN>', false);
+              setRowHighlightForPlace('<UNKNOWN>', false);
+            });
+          }
+        }
+        function initializewhenready() {
+          console.log('Initialization attempt '+READY_ATTEMPT_COUNT);
+          if (READY_ATTEMPT_COUNT > READY_ATTEMPT_MAX) {
+            clearInterval(READYTIMER);
+            alert('Initialization failed!');
+          }
+          READY_ATTEMPT_COUNT += 1;
+          if (MAPDATA == null) return;
+          if (MAPOBJECT == null) return;
+          createallcircles();
+          console.log('Circles created.');
+          console.log('Creating table rows...');
+          createtablerowelems();
+          console.log('Table rows created.');
+          updateshowyears(SLIDERINIT[0], SLIDERINIT[1], true);
+          clearInterval(READYTIMER);
+          console.log('Initialization completed.');
+        }
+        $.getJSON('/static/data/mapviewdb.json', function(res) {
+          console.log('Data async get request received result.');
+          MAPDATA = res;
+          MAPDATA.tableRows = createtablerows(MAPDATA.rows);
+          MAPDATA.rowsForPlace['<UNKNOWN>'] = [];
+          console.log('Data parsed into rows.');
+          READYTIMER = window.setInterval(initializewhenready, 200);
+        });
+        console.log('Data structure logic ready and data get request sent.');
+      });
+    </script>
+    <! -- End data structures -->
+    <!-- For slider -->
+    <script>
+      $(function() {
+        function sliderchanged(updatemap) {
+          var minval = $('#slider-range').slider('values',0);
+          var maxval = $('#slider-range').slider('values',1);
+          $('#slider-container').attr('data-minval',minval);
+          $('#slider-container').attr('data-maxval',maxval);
+          $('#slider-input').val(minval+' - '+maxval);
+          if (updatemap) {
+            updateshowyears(minval, maxval);
+          }
+        }
+        // Called when dragging the bar of the slider.
+        function slidermousemoved(e) {
+          elem = $('#slider-range .ui-slider-range')
+          if (elem.attr('data-mouseIsDown')==1) {
+            var mouseDiff = e.pageX - elem.attr('data-mouseStartX');
+            var totalYears = $('#slider-range').slider('option', 'max') - $('#slider-range').slider('option', 'min');
+            var sliderDelta = Math.round(mouseDiff * totalYears / $('#slider-range').width());
+            var sliderVal = parseInt(elem.attr('data-rangeStart')) + sliderDelta;
+            var sliderEndDiff = $('#slider-range').slider('values',1)-$('#slider-range').slider('values',0);
+            if (sliderVal >= $('#slider-range').slider('option','min') && sliderVal+sliderEndDiff <= $('#slider-range').slider('option','max')) {
+              $('#slider-range').slider('values',0,sliderVal);
+              $('#slider-range').slider('values',1,sliderVal+sliderEndDiff);
+              sliderchanged(true);
+            }
+          }
+        }
+        $( "#slider-range" ).slider({
+          range: true,
+          min: SLIDERRANGE[0],
+          max: SLIDERRANGE[1],
+          values: SLIDERINIT,
+          // These functions control handle movement and end.
+          slide: function( event, ui ) { sliderchanged(true); },
+          slidestop: function( event, ui ) { sliderchanged(true); }
+        });
+        $('#slider-range .ui-slider-range').mousedown(function(e) {
+          var elem = $('#slider-range .ui-slider-range');
+          e.preventDefault();
+          e.stopPropagation();
+          elem.attr('data-mouseStartX', e.pageX);
+          elem.attr('data-rangeStart', $('#slider-range').slider('values',0));
+          elem.attr('data-mouseIsDown', 1);
+          // Assigns slidermousemoved to handle dragging the slider bar.
+          $('body').mousemove(slidermousemoved);
+        });
+        // Called when finished dragging the bar of the slider.
+        $('body').mouseup(function(e) {
+          var sliderelem = $('#slider-range .ui-slider-range');
+          if (sliderelem.attr('data-mouseIsDown') == 1) {
+            sliderelem.attr('data-mouseIsDown',0);
+            sliderchanged(true);
+          }
+          $('body').unbind('mousemove',slidermousemoved);
+        });
+        $('#slider-range').slider('values', 0,SLIDERINIT[0]);
+        $('#slider-range').slider('values', 1,SLIDERINIT[1]);
+        sliderchanged(true);
+        function playbackstop() {
+          console.log('play off');
+          var elem = $('#slider-playback-button');
+          elem.attr('data-state', 'stopped');
+          elem.html('<span class="glyphicon glyphicon-play"></span>');
+          clearInterval(SLIDERPLAYTIMER);
+        }
+        $('#slider-playback-button').click(function() {
+          var elem = $('#slider-playback-button');
+          if (elem.attr('data-state') == 'stopped') {
+            elem.html('<span class="glyphicon glyphicon-pause"></span>');
+            elem.attr('data-state', 'playing');
+            console.log('play on');
+            SLIDERPLAYTIMER = setInterval(function() {
+              console.log('playback tick');
+              var sliderElem = $('#slider-range');
+              var delta = 1;
+              sliderElem.slider('values',0,sliderElem.slider('values',0)+delta);
+              var sliderEnd = sliderElem.slider('option', 'max');
+              var sliderUpdate = Math.min(sliderElem.slider('values',1)+delta, sliderEnd);
+              sliderElem.slider('values',1,sliderUpdate);
+              if (sliderUpdate >= sliderEnd) {
+                playbackstop();
+              }
+              sliderchanged(true);
+            }, 400);
+          } else {
+            playbackstop();
+          }
+        });
+        console.log("Slider ready.");
+      });
+    </script>
+    <!-- End for slider -->
+    <!-- For table -->
+    <script>
+      function setRowHighlightForPlace(place, highlight) {
+        var rowIds = MAPDATA.rowsForPlace[place];
+        for (var i=0; i<rowIds.length; i++) {
+          if (highlight) {
+            $('#list-entry-row-'+rowIds[i]).addClass('row-highlight');
+          } else {
+            $('#list-entry-row-'+rowIds[i]).removeClass('row-highlight');
+          }
+        }
+      }
+      function rowaddhandlers(elem, rowid) {
+        elem.click(function() { showoverlayforrow(rowid); } );
+        elem.mouseover(function() {
+          setCircleHighlightForPlace(MAPDATA.rows[rowid]['location'], true);
+          elem.addClass('row-highlight'); 
+        });
+        elem.mouseout(function() { 
+          setCircleHighlightForPlace(MAPDATA.rows[rowid]['location'], false);
+          elem.removeClass('row-highlight'); 
+        });
+      }
+      function settablerows(rowIndices) {
+        rowIndices.sort();
+        var elem = $('#list-container #list-body');
+        if (PREVINDICES == null) {
+          PREVINDICES = rowIndices;
+          settablerowsslow(rowIndices);
+          return;
+        }
+        var nextCheck = 0;
+        for (var i=0; i<rowIndices.length; i++) {
+          var j;
+          for (j=nextCheck; j<PREVINDICES.length; j++ ) {
+            if (PREVINDICES[j] >= rowIndices[i]) {
+              break;
+            } else {
+              elem.find('#list-entry-row-'+PREVINDICES[j]).css('display','none');
+            }
+          }
+          nextCheck = j;
+          if (PREVINDICES[j] == rowIndices[i]) {
+            nextCheck++;
+          } else {
+            var curr = elem.find('#list-entry-row-'+rowIndices[i]);
+            curr.css('display','');
+          }
+        }
+        for (var j=nextCheck; j<PREVINDICES.length; j++) {
+          elem.find('#list-entry-row-'+PREVINDICES[j]).css('display','none');
+        }
+        $('#count-label').html(rowIndices.length+' of '+MAPDATA.rows.length+' rows');
+        PREVINDICES = rowIndices;
+      }
+      function settablerowsslow(rowIndices) {
+        var elem = $('#list-container #list-body');
+        if (TABLEROWOBJECTS.length == 0) return;
+        elem.empty();
+        for (var i=0; i<rowIndices.length; i++) {
+          var toadd = TABLEROWOBJECTS[rowIndices[i]];
+          var idx = rowIndices[i];
+          toadd.appendTo(elem);
+        }
+        $('#count-label').html(rowIndices.length+' of '+MAPDATA.rows.length+' rows');
+      }
+      function createtablerowelems() {
+        // Create the rows and store in a list.
+        var elem = $('#list-container #list-body');
+        elem.empty();
+        PREVINDICES = [];
+        var elemsToAdd = [];
+        for (var i=0; i<MAPDATA.tableRows.length; i++) {
+          PREVINDICES.push(i);
+          var rowdata = MAPDATA.tableRows[i];
+          var toadd = $('<div></div>').addClass('list-row');
+          toadd.attr('id', 'list-entry-row-'+i);
+          for (var j=0; j<rowdata.length; j++) {
+            var inelem = $('<span/>');
+            inelem.addClass('list-row-col'+(j+1));
+            inelem.html(rowdata[j]);
+            inelem.appendTo(toadd);
+          }
+          elemsToAdd.push(toadd);
+          rowaddhandlers(toadd, i);
+        }
+        elemsToAdd.sort(function(a,b) { return MAPDATA.rows[$(b).attr('id').slice(15)]['signatures']-MAPDATA.rows[$(a).attr('id').slice(15)]['signatures']; });
+        for (var i=0; i<elemsToAdd.length; i++) {
+          elemsToAdd[i].appendTo(elem);
+        }
+        //console.log('Table added '+elemsToAdd.length+' row elements.');
+      }
+      console.log("Table logic ready.");
+    </script>
+    <! -- End for table -->
+    <!-- For modal overlay -->
+    <script>
+      function overlayopen(title, content) {
+        // Sizing works by first setting the height to maximum allowable height
+        // compared to page length, and then after rendering truncating the
+        // modal box to the actual used size.
+        var dialogs = $('.ui-dialog');
+        for (var i=0; i<dialogs.length; i++) {
+          console.log('Removing '+dialogs.length+' other open dialogs.');
+          $(dialogs[i]).remove()
+        }
+        var elem = $('<div></div>');
+        var buttons = [{
+          text:'Close',
+          click:function() { $(this).dialog('close'); }
+        }];
+        var options = {
+          autoOpen:false,
+          resizable:false,
+          buttons:buttons,
+          closeOnEscape:true
+        }
+        elem.dialog(options);
+        elem.bind('dialogclose', function(evt) {
+          elem.dialog('destroy').remove();
+        });
+        elem.html(content);
+        elem.dialog('option','title',title);
+        elem.dialog('open');
+        var modalStyle = {
+          'position':'absolute',
+          'top':$('#container').height()*.1,
+          'left':$('#container').outerWidth()*.1,
+          'width':$('#container').outerWidth()*.8,
+          'height':$('#container').height()*.85
+        }
+        $('.ui-dialog').css(modalStyle);
+        var staticHeight = $('.ui-dialog-titlebar').outerHeight(true) + $('.ui-dialog-buttonpane').outerHeight(true);
+        var innermaxheight = $('.ui-dialog').height() - 1.1*staticHeight;
+        $('.ui-dialog-content').css('max-height',innermaxheight);
+        $('.overlay-rows-container').css('max-height',innermaxheight-$('.overlay-footer').height()*2.5);
+        var usedheight = $('.ui-dialog-content').height() + 1.1*staticHeight;
+        $('.ui-dialog').css('height',usedheight);
+        $('.overlay-row-entry a').css('color', $('#container a').css('color'));
+      }
+      function overlayListContentForRows(rowIdxs) {
+        var wrapper = $('#overlay-content-template').clone();
+        wrapper.attr('id', 'overlay-content-'+rowIdxs.toString());
+        var elems = [];
+        for (var i=0; i<rowIdxs.length; i++) {
+          var elem = $('#overlay-row-template').clone();
+          var rowdata = MAPDATA.rows[rowIdxs[i]];
+          elem.attr('id', 'overlay-row-'+rowIdxs[i]);
+          elem.addClass('overlay-row-entry');
+          elem.find('.overlay-row-title').html(rowdata['topic']);
+          var creationdata = rowdata['creation date'];
+          var creationdisp = creationdata.length>0 ? creationdata : '(unknown)';
+          elem.find('.overlay-row-created').html('Creation date: '+creationdisp);
+          elem.find('.overlay-row-dates').html('Activity dates: '+rowdata['time start']+' to '+rowdata['time end']);
+          elem.find('.overlay-row-location').html('Location: '+rowdata['location']);
+          elem.find('.overlay-row-signatories').html('Selected signatories: '+rowdata['people'].join(", "));
+          elem.find('.overlay-row-sigcount').html('Total '+rowdata['signatures']+' signatures');
+          elem.find('.overlay-row-citation').html(rowdata['title']);
+          elem.find('.overlay-row-link-dataverse').attr('href', DATAVERSEURLPREFIX+rowdata['dataverse id']);
+          elem.find('.overlay-row-link-pds').attr('href', rowdata['pds url']);
+          elems.push(elem);
+        }
+        elems.sort(function(a,b) { return MAPDATA.rows[b.attr('id').slice(12)]['signatures'] - MAPDATA.rows[a.attr('id').slice(12)]['signatures']; });
+        var listWrapper = wrapper.find('.overlay-rows-container');
+        for (var i=0; i<elems.length; i++) {
+          elems[i].appendTo(listWrapper);
+        }
+        var footerText = 'Inspecting '+rowIdxs.length+' of '+PREVINDICES.length+' petitions in '+$('#slider-container').attr('data-minval')+'-'+$('#slider-container').attr('data-maxval')+' out of '+MAPDATA.rows.length+' petitions total.';
+        wrapper.find('.overlay-footer').html(footerText);
+        var output = $('<div></div>');
+        wrapper.appendTo(output);
+        return output;
+      }
+      function showoverlayforrow(rowidx) {
+        console.log('Overlay row: '+rowidx);
+        var row = MAPDATA.rows[rowidx];
+        var title = MAPDATA.tableRows[rowidx][1]+' '+row['topic']+' :: petition details';
+        var content = overlayListContentForRows([rowidx]);
+        overlayopen(title, content);
+      }
+      function showoverlayforplace(place) {
+        console.log('Overlay place: '+place);
+        var title = place.replace('<UNKNOWN>', 'Unknown location')+' '+$('#slider-input').val().replace(/ /g,'')+' :: petition details';
+        var rowinds = ROWSFORPLACE[place];
+        var content = overlayListContentForRows(rowinds);
+        overlayopen(title, content.html());
+      }
+      console.log('Overlay ready.');
+    </script>
+    <!-- End modal overlay -->
+    <!-- Begin interactivity -->
+    <script>
+      function _updateshowyears(yearmin, yearmax) {
+        if (MAPDATA == null) return;
+        MAPISUPDATING = true;
+        var curr = {};
+        for (var i=yearmin; i<=yearmax; i++) {
+          if (i in MAPDATA.rowsForYear) {
+            var rows = MAPDATA.rowsForYear[i];
+            for (var j=0; j<rows.length; j++) {
+              curr[rows[j]] = 1;
+            }
+          }
+        }
+        var output = [];
+        ROWSFORPLACE = {};
+        for (var c in curr) {
+          output.push(c);
+          var place = MAPDATA.rows[c]['location'];
+          if (! (place in MAPDATA.latlngForPlace)) {
+            place = '<UNKNOWN>';
+          }
+          if (! (place in ROWSFORPLACE)) ROWSFORPLACE[place] = [];
+          ROWSFORPLACE[place].push(c);
+        }
+        $('#map-unknown-location').hide();
+        for (p in CIRCLEOBJECTS) {
+          var circle = CIRCLEOBJECTS[p];
+          if ($(circle).attr('id') == 'map-unknown-location') {
+            if ('<UNKNOWN>' in ROWSFORPLACE) {
+              $('#map-unknown-location').show()
+            }
+          } else {
+            if (p in ROWSFORPLACE) {
+              circle.setRadius(circleradiusforcount(ROWSFORPLACE[p].length));
+              circle.setMap(MAPOBJECT);
+            } else {
+              circle.setMap(null);
+            }
+          }
+        }
+        settablerows(output);
+        console.log('Timeline filter updated: '+yearmin+' - '+yearmax);
+      }
+      function updateshowyears(minyear, maxyear) {
+        if (MAPUPDATELOOP != null) {
+          clearTimeout(MAPUPDATELOOP);
+        }
+        MAPUPDATELOOP = setTimeout(function() {
+          _updateshowyears(minyear, maxyear);
+          MAPUPDATELOOP = null;
+        }, 80);
+      }
+      console.log('Interactivity logic ready.');
+    </script>
+    <!-- End interactivity logic -->
+  </head>
+  <body>
+    <div id="container">
+      <div id="header">
+        <span id="breadcrumblink"><a href="/">Back to Homepage</a></span>
+        <span><h1>Anti-Slavery Petitions of Massachusetts</h1></span>
+        <span id="dataverselink"><a href="https://dataverse.harvard.edu/dataverse/antislaverypetitionsma" target="_blank">Go to Dataverse</a></span>
+      </div>
+      <div id="map-container">
+        <div id="map-unknown-location">
+          Unknown location
+        </div>
+        <div id="map-canvas"></div>
+      </div>
+      <div id="slider-container">
+        <div id="slider-container-inner">
+          <div id="slider-container-inner-upper">
+            <span id="slider-label">
+              <label for="slider-input">Date range:</label>
+              <input type="text" id="slider-input" readonly>
+            </span><span id="count-label">
+            </span><span id="slider-playback-container">
+              Timeline playback
+              <button id="slider-playback-button" data-state="stopped" href="#"><span class="glyphicon glyphicon-play"></span></button>
+            </span>
+          </div>
+          <div id="slider-range"></div>
+        </div>
+      </div>
+      <!-- Signatures, Years, Town, Topic -->
+      <div id="list-container">
+        <div id="list-header">
+          <div class="list-row">
+            <span class="list-row-col1">Sigs.</span>
+            <span class="list-row-col2">Years</span>
+            <span class="list-row-col3">Location</span>
+            <span class="list-row-col4">Topic</span>
+          </div>
+        </div>
+        <div id="list-body">
+          <i>Loading...</i>
+        </div>
+      </div>
+      <div id="footer">
+        <b>Authors:</b> <a href="http://www.gov.harvard.edu/people/faculty/daniel-carpenter">Daniel Carpenter</a>, Nicole Topich, and <a href="http://garthgriffin.com">Garth Griffin</a>.
+        <b>Copyright:</b>This website depicts public petition records, for more information see the <a href="http://thedata.harvard.edu/antislaverypetitionsma">Dataverse</a>. Source code released under GPL.
+        <b>Acknowledgements:</b> Supported by the National Endowment for the Humanities (PW-5105612), Massachusetts Archives of the Commonwealth, Radcliffe Institute for Advanced Study at Harvard University, Center for American Political Studies at Harvard University, Institutional Development Initiative at Harvard University, and Harvard University Library.
+    </div>
+    <div id="overlay-content-template">
+      <div class="overlay-content-container">
+        <div class="overlay-rows-container"></div>
+        <div class="overlay-footer">Footer</div>
+      </div>
+    </div>
+    <div id="overlay-row-template">
+      <div class="overlay-row-title">Title</div>
+      <div class="overlay-row-created">Date</div>
+      <div class="overlay-row-dates">Activity</div>
+      <div class="overlay-row-location">Place</div>
+      <div class="overlay-row-sigcount">0</div>
+      <div class="overlay-row-signatories">Names</div>
+      <div class="overlay-row-citation">Citation</div>
+      <div class="overlay-row-links">
+        <a class="overlay-row-link-dataverse" target="_blank" href="">View details in Dataverse</a> | <a class="overlay-row-link-pds" target="_blank" href="">View scanned petition</a>
+      </div>
+    </div>
+  </body>
+</html>
