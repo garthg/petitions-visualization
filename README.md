@@ -1,7 +1,7 @@
 # Antislavery Petitions Visualization
 
-Author: Garth Griffin (http://garthgriffin.com)
-Date: July 10, 2015
+Author: Garth Griffin (http://garthgriffin.com)  
+Date: July 10, 2015  
 
 This project builds on the work of the Antislavery Petitions Massachusetts
 Dataverse [1]. The current deployment is for a Map View that enables easy
