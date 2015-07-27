@@ -8,7 +8,8 @@ Dataverse [1]. The current deployment is for a Map View that enables easy
 geographic and temporal exploration of the dataset. A live demo is available
 at http://antislaverypetitions.pythonanywhere.com or you can run the demo
 locally by following the instructions in the Usage section of this README.
-A detailed writeup of the project will be made available as well.
+A detailed writeup can be found in the included pdf file
+petitions_mapview_project_documentation.pdf.
 
 The project has been done in collaboration with Radcliffe Institute for
 Advanced Study [2] and with help from the Harvard Institute of Quantitative
@@ -27,9 +28,9 @@ Running the development server should make the app available at
 http://localhost:5000 in your web browser.
 
 To make updates to the dataset underlying the application, use the code
-pipeline in the preprocessing/ directory:
-geocoder.py -- For geocoding locations.
-makewebdbpy -- For assemebling the data file used in the web application.
+pipeline in the preprocessing/ directory:  
+geocoder.py -- For geocoding locations.  
+makewebdbpy -- For assemebling the data file used in the web application.  
 
 Implementation details will be available in the detailed writeup.
 
